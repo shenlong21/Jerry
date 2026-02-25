@@ -1,0 +1,37 @@
+import { Component } from '@angular/core';
+
+@Component({
+    selector: 'app-home',
+    standalone: true,
+    template: `
+    <div class="home-container">
+      <h1>Jerry for you</h1>
+    </div>
+  `,
+    styles: [`
+    .home-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 60vh;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      letter-spacing: -0.05em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  `]
+})
+export class HomeComponent { }

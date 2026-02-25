@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    margin: 0;
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    background-color: #f9fafb;
+    color: #111827;
+}
+
+* {
+    box-sizing: border-box;
+}
