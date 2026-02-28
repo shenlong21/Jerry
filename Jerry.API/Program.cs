@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add SQLite3 Database
-var connectionString = "Data Source=jerry.db";
+var connectionString = "Data Source=jerry.sqlite3";
 builder.Services.AddDbContext<JerryContext>(options =>
     options.UseSqlite(connectionString, sqliteOptions =>
     {

@@ -33,7 +33,7 @@ namespace Jerry.API.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Jerry.API.Models.Task", b =>
+            modelBuilder.Entity("Jerry.API.Models.SaltTask", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,10 +50,9 @@ namespace Jerry.API.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -63,20 +62,47 @@ namespace Jerry.API.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("Jerry.API.Models.TaskUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TaskUsers");
+                });
+
             modelBuilder.Entity("Jerry.API.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("randomblob(16)");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AILTag")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("GrubPassword")
                         .HasMaxLength(255)
@@ -91,7 +117,7 @@ namespace Jerry.API.Migrations
                         .HasMaxLength(45)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("LastConnected")
+                    b.Property<DateTime?>("LastConnected")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -103,7 +129,7 @@ namespace Jerry.API.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Project")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -111,20 +137,67 @@ namespace Jerry.API.Migrations
                     b.HasIndex("Hostname")
                         .IsUnique();
 
-                    b.HasIndex("Project");
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Jerry.API.Models.SaltTask", b =>
+                {
+                    b.HasOne("Jerry.API.Models.Project", "Project")
+                        .WithMany("SaltTasks")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Jerry.API.Models.TaskUser", b =>
+                {
+                    b.HasOne("Jerry.API.Models.SaltTask", "SaltTask")
+                        .WithMany("TaskUsers")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Jerry.API.Models.User", "User")
+                        .WithMany("TaskUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("SaltTask");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Jerry.API.Models.User", b =>
                 {
-                    b.HasOne("Jerry.API.Models.Project", "ProjectNavigation")
-                        .WithMany()
-                        .HasForeignKey("Project")
+                    b.HasOne("Jerry.API.Models.Project", "Project")
+                        .WithMany("Users")
+                        .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("ProjectNavigation");
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Jerry.API.Models.Project", b =>
+                {
+                    b.Navigation("SaltTasks");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Jerry.API.Models.SaltTask", b =>
+                {
+                    b.Navigation("TaskUsers");
+                });
+
+            modelBuilder.Entity("Jerry.API.Models.User", b =>
+                {
+                    b.Navigation("TaskUsers");
                 });
 #pragma warning restore 612, 618
         }
