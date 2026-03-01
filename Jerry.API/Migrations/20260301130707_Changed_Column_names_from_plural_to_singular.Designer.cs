@@ -3,6 +3,7 @@ using System;
 using Jerry.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jerry.API.Migrations
 {
     [DbContext(typeof(JerryContext))]
-    partial class JerryContextModelSnapshot : ModelSnapshot
+    [Migration("20260301130707_Changed_Column_names_from_plural_to_singular")]
+    partial class Changed_Column_names_from_plural_to_singular
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -28,22 +31,15 @@ namespace Jerry.API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsPrefixCmdRun")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Commands");
+                    b.ToTable("Command");
                 });
 
             modelBuilder.Entity("Jerry.API.Models.Models.Project", b =>
@@ -72,7 +68,6 @@ namespace Jerry.API.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("SaltTaskId")
@@ -84,7 +79,7 @@ namespace Jerry.API.Migrations
 
                     b.HasIndex("SaltTaskId");
 
-                    b.ToTable("SaltCommands");
+                    b.ToTable("SaltCommand");
                 });
 
             modelBuilder.Entity("Jerry.API.Models.Models.SaltTask", b =>
@@ -205,13 +200,13 @@ namespace Jerry.API.Migrations
                     b.HasOne("Jerry.API.Models.Models.Command", "Command")
                         .WithMany("SaltCommands")
                         .HasForeignKey("CommandId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Jerry.API.Models.Models.SaltTask", "SaltTask")
                         .WithMany("SaltCommands")
                         .HasForeignKey("SaltTaskId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Command");

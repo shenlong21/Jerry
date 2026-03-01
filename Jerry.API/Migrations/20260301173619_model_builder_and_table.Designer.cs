@@ -3,6 +3,7 @@ using System;
 using Jerry.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jerry.API.Migrations
 {
     [DbContext(typeof(JerryContext))]
-    partial class JerryContextModelSnapshot : ModelSnapshot
+    [Migration("20260301173619_model_builder_and_table")]
+    partial class model_builder_and_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -30,11 +33,6 @@ namespace Jerry.API.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsPrefixCmdRun")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()

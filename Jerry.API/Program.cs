@@ -24,6 +24,7 @@ builder.Services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
 
 // Add Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ISaltTaskRepository, SaltTaskRepository>();
 
 // Add CORS if needed
 builder.Services.AddCors(options =>
@@ -45,13 +46,13 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<JerryContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        
+
         logger.LogInformation("Starting database initialization...");
-        
+
         // Ensure database is created
         await dbContext.Database.EnsureCreatedAsync();
         logger.LogInformation("Database file created/verified");
-        
+
         // Get pending migrations
         var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
         if (pendingMigrations.Any())
@@ -61,7 +62,7 @@ try
             {
                 logger.LogInformation($"  - {migration}");
             }
-            
+
             // Apply all pending migrations
             await dbContext.Database.MigrateAsync();
             logger.LogInformation("All migrations applied successfully");

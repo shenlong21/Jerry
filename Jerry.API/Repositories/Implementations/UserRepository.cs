@@ -1,7 +1,8 @@
 using Jerry.API.Data;
-using Jerry.API.Models;
+using Jerry.API.Models.Models;
 using Jerry.API.Repositories.Interfaces;
-using Jerry.API.ViewModels;
+using Jerry.API.Models.ViewModels;
+using Jerry.API.Models.RequestModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jerry.API.Repositories.Implementations
@@ -17,24 +18,29 @@ namespace Jerry.API.Repositories.Implementations
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retrieves all users from the database.
+        /// </summary>
+        /// <returns>A list of UserVM objects.</returns>
         public async Task<IEnumerable<UserVM>> GetAllUsersAsync()
         {
             try
             {
                 return await _context.Users
                     .AsNoTracking()
-                    .Include(p => p.ProjectNavigation)
+                    .Include(p => p.Project)
                     .Select(u => new UserVM
-                {
-                    id = u.Id,
-                    Hostname =  u.Hostname,
-                    GrubPassword =  u.GrubPassword,
-                    IpAddress = u.IpAddress,
-                    LastConnected = u.LastConnected,
-                    Name = u.Name,
-                    Password = u.Password,
-                    Project = u.ProjectNavigation
-                }).ToListAsync();
+                    {
+                        Id = u.Id,
+                        Hostname = u.Hostname,
+                        GrubPassword = u.GrubPassword,
+                        IpAddress = u.IpAddress,
+                        LastConnected = u.LastConnected,
+                        Name = u.Name,
+                        AILTag = u.AILTag,
+                        Password = u.Password,
+                        Project = (u.Project != null) ? u.Project.ProjectName : string.Empty
+                    }).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -43,11 +49,32 @@ namespace Jerry.API.Repositories.Implementations
             }
         }
 
-        public async Task<User?> GetUserByIdAsync(Guid id)
+        public async Task<UserVM> GetUserByIdAsync(int id)
         {
             try
             {
-                return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var user = await _context.Users
+                    .Include(p => p.Project)
+                    .AsNoTracking()
+                    .Where(u => u.Id == id).Select(u => new UserVM
+                    {
+                        Id = u.Id,
+                        Name = u.Name,
+                        Hostname = u.Hostname,
+                        Project = (u.Project != null) ? u.Project.ProjectName : string.Empty,
+                        IpAddress = u.IpAddress,
+                        GrubPassword = u.GrubPassword,
+                        Password = u.Password,
+                        AILTag = u.AILTag,
+                        LastConnected = u.LastConnected
+                    }).FirstOrDefaultAsync();
+
+                if (user is not null)
+                {
+                    return user;
+                }
+
+                throw new Exception($"User with ID {id} not found");
             }
             catch (Exception ex)
             {
@@ -56,15 +83,35 @@ namespace Jerry.API.Repositories.Implementations
             }
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<User> CreateUserAsync(CreateUserRequestModel userRequest)
         {
             try
             {
-                user.Id = Guid.NewGuid();
-                user.LastConnected = DateTime.UtcNow;
-                _context.Users.Add(user);
+                var project = await _context.Projects
+                    .AsNoTracking()
+                    .Where(p => p.Id == userRequest.ProjectId)
+                    .FirstOrDefaultAsync();
+
+                if (project is null)
+                {
+                    throw new Exception($"Project with ID {userRequest.ProjectId} not found");
+                }
+
+                var newUser = new User
+                {
+                    Name = userRequest.Name,
+                    Hostname = userRequest.Hostname,
+                    ProjectId = userRequest.ProjectId,
+                    IpAddress = userRequest.IpAddress,
+                    GrubPassword = userRequest.GrubPassword,
+                    Password = userRequest.Password,
+                    AILTag = userRequest.AILTag,
+                    LastConnected = DateTime.UtcNow
+                };
+
+                _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
-                return user;
+                return newUser;
             }
             catch (Exception ex)
             {
@@ -75,37 +122,39 @@ namespace Jerry.API.Repositories.Implementations
 
         public async Task<User> UpdateUserAsync(User user)
         {
-            try
-            {
-                user.LastConnected = DateTime.UtcNow;
-                _context.Users.Update(user);
-                await _context.SaveChangesAsync();
-                return user;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error updating user with ID {user.Id}");
-                throw;
-            }
+            return null;
+            // try
+            // {
+            //     user.LastConnected = DateTime.UtcNow;
+            //     _context.Users.Update(user);
+            //     await _context.SaveChangesAsync();
+            //     return user;
+            // }
+            // catch (Exception ex)
+            // {
+            //     _logger.LogError(ex, $"Error updating user with ID {user.Id}");
+            //     throw;
+            // }
         }
 
         public async Task<bool> DeleteUserAsync(Guid id)
         {
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                if (user == null)
-                    return false;
+            return false;
+            // try
+            // {
+            //     var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            //     if (user == null)
+            //         return false;
 
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error deleting user with ID {id}");
-                throw;
-            }
+            //     _context.Users.Remove(user);
+            //     await _context.SaveChangesAsync();
+            //     return true;
+            // }
+            // catch (Exception ex)
+            // {
+            //     _logger.LogError(ex, $"Error deleting user with ID {id}");
+            //     throw;
+            // }
         }
 
         public async Task<User?> GetUserByHostnameAsync(string hostname)

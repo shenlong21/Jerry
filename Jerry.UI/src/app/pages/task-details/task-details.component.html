@@ -1,0 +1,161 @@
+<div class="task-details-container">
+  <div class="header-actions">
+    <a routerLink="/tasks" class="back-link">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+      Back to Tasks
+    </a>
+  </div>
+
+  <div class="task-header">
+    <div class="title-section">
+
+      <h2>{{ saltTask()?.title}}</h2>
+      <span class="project-tag">{{ saltTask()?.project?.name }}</span>
+    </div>
+    <!-- <button class="run-btn">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polygon points="5 3 19 12 5 21 5 3" />
+      </svg>
+      Execute Script
+    </button> -->
+  </div>
+
+  <div class="script-section">
+    <div class="section-header">
+      <h3>Execution Script</h3>
+
+      <!-- <span class="lang-badge">bash</span> -->
+      <span class="lang-badge copyable" (click)="copyScriptString($event, saltTask().saltSelector)">copy</span>
+    </div>
+    <pre class="code-block"><code>{{ buildScriptString(saltTask().saltSelector) }}</code></pre>
+  </div>
+
+  <div class="users-deployment-section">
+    <h3 class="section-title">Deployment Status</h3>
+
+    <div class="columns-grid">
+      <!-- Pending Column -->
+      <div class="status-column pending-col">
+        <div class="col-header">
+          <div class="col-title">
+            <div class="status-dot pending-dot"></div>
+            <h4>Pending Execution</h4>
+          </div>
+          <span class="count-badge">{{ pendingUsers().length }}</span>
+        </div>
+
+        <div class="user-list">
+          @for (user of pendingUsers(); track user.userId) {
+          <div class="compact-user-card">
+            <div class="avatar">{{ user.user[0] }}</div>
+            <span class="user-name">{{ user.user }}</span>
+            <span class="" title="Run task for this user" (click)="copyScriptString($event, `'${user.hostname}'`)"><svg
+              class="copy-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg></span>
+            <span class="copyable" title="Run task for this user" (click)="markTaskAsCompletedForOneUser(user.userId)"><svg
+              class="check-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg></span>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Completed Column -->
+      <div class="status-column completed-col">
+        <div class="col-header">
+          <div class="col-title">
+            <div class="status-dot completed-dot"></div>
+            <h4>Completed successfully</h4>
+          </div>
+          <span class="count-badge completed-badge">{{ completedUsers().length }}</span>
+        </div>
+
+        <div class="user-list">
+          @for (user of completedUsers(); track user.userId) {
+          <div class="compact-user-card completed-card">
+            <div class="avatar completed-avatar">{{ user.user[0] }}</div>
+            <span class="user-name">{{ user.user }}</span>
+            <span class="" title="Run task for this user" (click)="copyScriptString($event, `'${user.hostname}'`)"><svg
+              class="copy-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg></span>
+            <span class="copyable" title="Run task for this user" (click)="markTaskAsInCompleteForOneUser(user.userId)">
+            <svg
+              class="undo-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M3 7v6h6" />
+              <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+            </svg>
+            </span>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

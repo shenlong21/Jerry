@@ -3,6 +3,7 @@ using System;
 using Jerry.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,41 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jerry.API.Migrations
 {
     [DbContext(typeof(JerryContext))]
-    partial class JerryContextModelSnapshot : ModelSnapshot
+    [Migration("20260228134400_SaltTask_Table_Create")]
+    partial class SaltTask_Table_Create
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
-
-            modelBuilder.Entity("Jerry.API.Models.Models.Command", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CommandString")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsPrefixCmdRun")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Commands");
-                });
 
             modelBuilder.Entity("Jerry.API.Models.Models.Project", b =>
                 {
@@ -60,31 +34,6 @@ namespace Jerry.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("Jerry.API.Models.Models.SaltCommand", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CommandId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SaltTaskId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommandId");
-
-                    b.HasIndex("SaltTaskId");
-
-                    b.ToTable("SaltCommands");
                 });
 
             modelBuilder.Entity("Jerry.API.Models.Models.SaltTask", b =>
@@ -103,10 +52,6 @@ namespace Jerry.API.Migrations
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("SaltSelector")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
                         .HasMaxLength(50)
@@ -200,25 +145,6 @@ namespace Jerry.API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Jerry.API.Models.Models.SaltCommand", b =>
-                {
-                    b.HasOne("Jerry.API.Models.Models.Command", "Command")
-                        .WithMany("SaltCommands")
-                        .HasForeignKey("CommandId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Jerry.API.Models.Models.SaltTask", "SaltTask")
-                        .WithMany("SaltCommands")
-                        .HasForeignKey("SaltTaskId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Command");
-
-                    b.Navigation("SaltTask");
-                });
-
             modelBuilder.Entity("Jerry.API.Models.Models.SaltTask", b =>
                 {
                     b.HasOne("Jerry.API.Models.Models.Project", "Project")
@@ -260,11 +186,6 @@ namespace Jerry.API.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Jerry.API.Models.Models.Command", b =>
-                {
-                    b.Navigation("SaltCommands");
-                });
-
             modelBuilder.Entity("Jerry.API.Models.Models.Project", b =>
                 {
                     b.Navigation("SaltTasks");
@@ -274,8 +195,6 @@ namespace Jerry.API.Migrations
 
             modelBuilder.Entity("Jerry.API.Models.Models.SaltTask", b =>
                 {
-                    b.Navigation("SaltCommands");
-
                     b.Navigation("TaskUsers");
                 });
 

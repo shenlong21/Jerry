@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Jerry.API.Models;
+using Jerry.API.Models.Models;
 
 namespace Jerry.API.Data
 {
@@ -11,8 +11,10 @@ namespace Jerry.API.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<SaltTask> Tasks { get; set; }
+        public DbSet<SaltTask> SaltTasks { get; set; }
         public DbSet<TaskUser> TaskUsers { get; set; }
+        public DbSet<Command> Commands { get; set; }
+        public DbSet<SaltCommand> SaltCommands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,6 +82,33 @@ namespace Jerry.API.Data
                     .WithMany(e => e.TaskUsers)
                     .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            // SaltCommands configuration
+            modelBuilder.Entity<SaltCommand>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Description).HasMaxLength(1000);
+
+                entity.HasOne(e => e.SaltTask)
+                    .WithMany(e => e.SaltCommands)
+                    .HasForeignKey(e => e.SaltTaskId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.Command)
+                    .WithMany(e => e.SaltCommands)
+                    .HasForeignKey(e => e.CommandId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<Command>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.IsPrefixCmdRun).HasDefaultValue(true);
             });
         }
     }

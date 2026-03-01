@@ -3,6 +3,7 @@ using System;
 using Jerry.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,35 +11,30 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jerry.API.Migrations
 {
     [DbContext(typeof(JerryContext))]
-    partial class JerryContextModelSnapshot : ModelSnapshot
+    [Migration("20260301122440_Added_commands_and_SaltCommand_table")]
+    partial class Added_commands_and_SaltCommand_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("Jerry.API.Models.Models.Command", b =>
+            modelBuilder.Entity("Jerry.API.Models.Models.Commands", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CommandString")
+                    b.Property<string>("Command")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsPrefixCmdRun")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -62,7 +58,7 @@ namespace Jerry.API.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Jerry.API.Models.Models.SaltCommand", b =>
+            modelBuilder.Entity("Jerry.API.Models.Models.SaltCommands", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,8 +67,10 @@ namespace Jerry.API.Migrations
                     b.Property<int>("CommandId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("CommandsId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("SaltTaskId")
@@ -80,7 +78,7 @@ namespace Jerry.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CommandId");
+                    b.HasIndex("CommandsId");
 
                     b.HasIndex("SaltTaskId");
 
@@ -104,7 +102,7 @@ namespace Jerry.API.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SaltSelector")
+                    b.Property<string>("Script")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -200,23 +198,21 @@ namespace Jerry.API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Jerry.API.Models.Models.SaltCommand", b =>
+            modelBuilder.Entity("Jerry.API.Models.Models.SaltCommands", b =>
                 {
-                    b.HasOne("Jerry.API.Models.Models.Command", "Command")
+                    b.HasOne("Jerry.API.Models.Models.Commands", "Commands")
                         .WithMany("SaltCommands")
-                        .HasForeignKey("CommandId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CommandsId");
 
-                    b.HasOne("Jerry.API.Models.Models.SaltTask", "SaltTask")
+                    b.HasOne("Jerry.API.Models.Models.SaltTask", "SaltTasks")
                         .WithMany("SaltCommands")
                         .HasForeignKey("SaltTaskId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Command");
+                    b.Navigation("Commands");
 
-                    b.Navigation("SaltTask");
+                    b.Navigation("SaltTasks");
                 });
 
             modelBuilder.Entity("Jerry.API.Models.Models.SaltTask", b =>
@@ -260,7 +256,7 @@ namespace Jerry.API.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Jerry.API.Models.Models.Command", b =>
+            modelBuilder.Entity("Jerry.API.Models.Models.Commands", b =>
                 {
                     b.Navigation("SaltCommands");
                 });

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Jerry.API.Repositories.Interfaces;
-using Jerry.API.Models;
+using Jerry.API.Models.Models;
+using Jerry.API.Models.RequestModels;
 
 namespace Jerry.API.Controllers
 {
@@ -26,9 +27,7 @@ namespace Jerry.API.Controllers
             try
             {
                 var users = await _userRepository.GetAllUsersAsync();
-                
-                
-                
+
                 return Ok(users);
             }
             catch (Exception ex)
@@ -42,12 +41,12 @@ namespace Jerry.API.Controllers
         /// Get a user by ID
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(Guid id)
+        public async Task<ActionResult<User>> GetUserById(int id)
         {
             try
             {
                 var user = await _userRepository.GetUserByIdAsync(id);
-                
+
                 if (user == null)
                 {
                     return NotFound($"User with ID {id} not found");
@@ -66,7 +65,7 @@ namespace Jerry.API.Controllers
         /// Create a new user
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserRequest request)
+        public async Task<ActionResult<User>> CreateUser([FromBody] CreateUserRequestModel request)
         {
             try
             {
@@ -75,18 +74,9 @@ namespace Jerry.API.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var user = new User
-                {
-                    Name = request.Name,
-                    Hostname = request.Hostname,
-                    Project = request.Project,
-                    IpAddress = request.IpAddress,
-                    GrubPassword = request.GrubPassword,
-                    Password = request.Password
-                };
-
-                var createdUser = await _userRepository.CreateUserAsync(user);
-                return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+                var createdUser = await _userRepository.CreateUserAsync(request);
+                // return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+                return Ok(createdUser);
             }
             catch (Exception ex)
             {
@@ -94,18 +84,5 @@ namespace Jerry.API.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-    }
-
-    /// <summary>
-    /// Request model for creating a user
-    /// </summary>
-    public class CreateUserRequest
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Hostname { get; set; } = string.Empty;
-        public int Project { get; set; }
-        public string? IpAddress { get; set; }
-        public string? GrubPassword { get; set; }
-        public string? Password { get; set; }
     }
 }
