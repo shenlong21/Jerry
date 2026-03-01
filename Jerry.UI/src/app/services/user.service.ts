@@ -2,17 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { User } from '../interfaces/user';
 
-export interface ApiUser {
-  id: string; // UUID
-  name: string | null;
-  hostname: string | null;
-  project: string | null;
-  ipAddress: string | null;
-  password: string | null;
-  grubPassword: string | null;
-  lastConnected: string; // date-time string
-}
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +13,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getUsers(): Observable<ApiUser[]> {
-    return this.http.get<ApiUser[]>(this.apiUrl);
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl);
   }
 }
