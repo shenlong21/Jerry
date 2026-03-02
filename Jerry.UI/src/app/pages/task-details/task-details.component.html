@@ -21,8 +21,9 @@
   <div class="task-header">
     <div class="title-section">
 
-      <h2>{{ saltTask()?.title}}</h2>
-      <span class="project-tag">{{ saltTask()?.project?.name }}</span>
+      <h2>{{ saltTask().title}}</h2>
+      <p>{{ saltTask().description }}</p>
+      <span class="project-tag">{{ saltTask().project.name }}</span>
     </div>
     <!-- <button class="run-btn">
       <svg

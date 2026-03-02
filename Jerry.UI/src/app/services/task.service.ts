@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
 import { SaltTask } from '../interfaces/salt-task';
 import { TaskUpdateForOneUser } from '../interfaces/request-interfaces/task-update-for-one-user';
+import { CreateSaltTaskRequest } from '../interfaces/request-interfaces/create-salt-task';
 
 @Injectable({
   providedIn: 'root',
@@ -24,5 +25,9 @@ export class TaskService {
   
   taskUpdateForOneUser(req: TaskUpdateForOneUser): Observable<boolean> {
     return this.http.post<boolean>(`${this.apiUrl}/TaskUpdateForOneUser`, req);
+  }
+  
+  createSaltTask(req: CreateSaltTaskRequest): Observable<SaltTask> {
+    return this.http.post<SaltTask>(`${this.apiUrl}`, req);
   }
 }

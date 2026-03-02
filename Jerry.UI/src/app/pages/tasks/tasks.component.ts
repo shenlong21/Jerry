@@ -48,9 +48,14 @@ export class TasksComponent implements OnInit {
   getStatusInText(status: TaskStatus): string {
     return TaskStatus[status].toString();
   }
-  
+
   openTaskDetails(task: SaltTask) {
     // Implement logic to open task details
     this.router.navigate(['/tasks', task.id]);
+  }
+
+  navigateToCreateTask() {
+    console.log("Navigate")
+    this.router.navigate(['tasks', 'create'])
   }
 }
