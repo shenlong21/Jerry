@@ -25,6 +25,8 @@ builder.Services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
 // Add Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISaltTaskRepository, SaltTaskRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<ICommandRepository, CommandRepository>();
 
 // Add CORS if needed
 builder.Services.AddCors(options =>

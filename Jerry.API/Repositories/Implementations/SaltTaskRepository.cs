@@ -14,9 +14,9 @@ namespace Jerry.API.Repositories.Implementations
     public class SaltTaskRepository : ISaltTaskRepository
     {
         private readonly JerryContext _context;
-        private readonly ILogger<UserRepository> _logger;
+        private readonly ILogger<SaltTaskRepository> _logger;
 
-        public SaltTaskRepository(JerryContext context, ILogger<UserRepository> logger)
+        public SaltTaskRepository(JerryContext context, ILogger<SaltTaskRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -188,7 +188,7 @@ namespace Jerry.API.Repositories.Implementations
                 {
                     Title = task.Title,
                     Description = task.Description ?? string.Empty,
-                    SaltSelector = task.SaltSelector ?? string.Empty,
+                    SaltSelector = $"-G 'project:{project.ProjectName}'",
                     Status = SaltTaskStatus.Pending,
                     ProjectId = task.ProjectId,
                     CreatedAt = DateTime.UtcNow,
@@ -218,32 +218,16 @@ namespace Jerry.API.Repositories.Implementations
                 }
 
                 await _context.SaveChangesAsync();
-
-                // adding commands
-                var commands = new List<Command>();
-
-                foreach (var command in task.Commands)
-                {
-                    commands.Add(new Command
-                    {
-                        Name = HyphenateString(command).Length <= 15 ? HyphenateString(command) : HyphenateString(command)[..15],
-                        CommandString = command,
-                        Description = HyphenateString(command),
-                    });
-                }
-
-                await _context.Commands.AddRangeAsync(commands);
-                await _context.SaveChangesAsync();
-
+                
                 // get the commands to add them to salt commands
 
                 var saltCommands = new List<SaltCommand>();
 
-                foreach (var command in commands)
+                foreach (var command in task.Commands)
                 {
                     saltCommands.Add(new SaltCommand
                     {
-                        CommandId = command.Id,
+                        CommandId = command,
                         SaltTaskId = newTask.Id,
                     });
                 }

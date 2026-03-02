@@ -1,6 +1,8 @@
 using Jerry.API.Repositories.Interfaces;
 using Jerry.API.Models.RequestModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.ComponentModel;
 
 
 namespace Jerry.API.Controllers
@@ -10,10 +12,13 @@ namespace Jerry.API.Controllers
     public class SaltTaskController : ControllerBase
     {
         private readonly ISaltTaskRepository _taskRepository;
+        private readonly ILogger<SaltTaskController> _logger;
 
-        public SaltTaskController(ISaltTaskRepository taskRepository)
+
+        public SaltTaskController(ISaltTaskRepository taskRepository, ILogger<SaltTaskController> logger)
         {
             _taskRepository = taskRepository;
+            _logger = logger;
         }
 
         [HttpGet]
