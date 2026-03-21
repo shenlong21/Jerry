@@ -3,6 +3,7 @@ using Jerry.API.Repositories.Interfaces;
 using Jerry.API.Repositories.Implementations;
 using Jerry.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Jerry.API.Models.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISaltTaskRepository, SaltTaskRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<ICommandRepository, CommandRepository>();
+
+// map secrets
+builder.Services.Configure<SaltAuthModel>(builder.Configuration.GetSection("SaltAuth"));
 
 // Add CORS if needed
 builder.Services.AddCors(options =>
