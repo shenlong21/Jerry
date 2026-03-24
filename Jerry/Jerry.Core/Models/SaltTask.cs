@@ -1,6 +1,6 @@
-using Jerry.API.Enums;
+using Jerry.Core.Enums;
 
-namespace Jerry.API.Models.Models;
+namespace Jerry.Core.Models;
 
 public class SaltTask
 {
@@ -8,7 +8,7 @@ public class SaltTask
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string SaltSelector { get; set; } = string.Empty;
-    public SaltTaskStatus Status { get; set; }
+    public SaltTaskStatuses Status { get; set; }
     public int ProjectId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

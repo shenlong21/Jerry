@@ -1,13 +1,13 @@
-using Jerry.API.Enums;
+using Jerry.Core.Enums;
 
-namespace Jerry.API.Models.Models;
+namespace Jerry.Core.Models;
 
 public class TaskUser
 {
     public int Id { get; set; }
     public int TaskId { get; set; }
     public int UserId { get; set; }
-    public SaltTaskStatus Status { get; set; }
+    public SaltTaskStatuses Status { get; set; }
 
     public SaltTask? SaltTask { get; set; }
     public User? User { get; set; }

@@ -1,6 +1,6 @@
-namespace Jerry.API.Enums;
+namespace Jerry.Core.Enums;
 
-public enum SaltTaskStatus
+public enum SaltTaskStatuses
 {
     Pending = 1,
     InProgress = 2,

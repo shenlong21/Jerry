@@ -1,4 +1,4 @@
-namespace Jerry.API.Models.Models;
+namespace Jerry.Core.Models;
 
 public class Command
 {
